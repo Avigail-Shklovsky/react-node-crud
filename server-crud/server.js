@@ -49,14 +49,18 @@ app.put("./books/:id", (req, res) => {
 });
 
 // delete book
-app.delete("./books/:id", (req, res) => {
-  const bookIndex = books.findIndex((b) => b.id === parseInt(req.params.id));
-  if (bookIndex === -1) return res.status(404).send("Book not found");
+app.delete('./books/:id',(req,res)=>{
+    const bookIndex = books.findIndex(b=>b.id===parseInt(req.params.id));
+    if(bookIndex===-1) return res.status(404).send("Book not found");
 
-  const updatedBooks = books.splice(bookIndex, 1);
-  res.json(updatedBooks);
+    const updatedBooks = books.splice(bookIndex,1);
+    res.json(updatedBooks);
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+
+
+
+app.listen(port, ()=>{
+    console.log(`Server is running on http://localhost:${port}`);
+    
+})
