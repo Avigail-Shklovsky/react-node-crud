@@ -1,10 +1,9 @@
+export const addBook = (newBookData, onSuccess) => {
+    console.log('add comp');
 
-
-
-export const updateBook = (newBookData, onSuccess) => {
     if (newBookData) {
-        fetch(`http://localhost:5000/books/${newBookData.id}`, {
-            method: 'PUT',
+        fetch(`http://localhost:5000/books`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -19,8 +18,9 @@ export const updateBook = (newBookData, onSuccess) => {
             .then(() => {
                 onSuccess();
             })
-            .catch(error => console.error('Error updating book:', error));
+            .catch(error => console.error('Error adding book:', error));
     } else {
         console.log('Error: newBookData is undefined');
     }
 };
+

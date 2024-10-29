@@ -1,76 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { updateBook } from './UpdateBook';
+import { addBook } from './AddBook'
 
-const Input = ({ booksLength, onUpdate }) => {
+const Input = ({ newId, status, bookData, onSuccess, refreshBooks }) => {
+    const [bookName, setBookName] = useState('');
+    const [author, setAuthor] = useState('');
+    const [id, setId] = useState('');
 
-    const [BookName, setBookName] = useState('');
-    const [Author, setAuthor] = useState('');
+
+
+    useEffect(() => {
+        if (status === 'update' && bookData) {
+            setId(bookData.id)
+            setBookName(bookData.name);
+            setAuthor(bookData.author);
+        } else {
+            setBookName('');
+            setAuthor('');
+            setId(newId)
+        }
+    }, [status, bookData, newId]);
+
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        submitNewBook();
-    };
 
-    const submitNewBook = () => {
+        const newBookData = { id, name: bookName, author };
 
-        fetch('http://localhost:5000/books', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                id: booksLength + 1,
-                name: BookName,
-                author: Author
-            })
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Book added:', data);
-                onUpdate(); 
-            })
-            .catch(error => console.error('Error adding book:', error));
-        clearForm();
-        
+        if (status === 'add') {
+            console.log('add from input', newBookData);
+            addBook(newBookData, () => {
+                onSuccess();
+                refreshBooks();
+            });
+        } else if (status === 'update' && bookData) {
+            console.log('update from input', newBookData);
+            updateBook(newBookData, () => {
+                onSuccess();
+                refreshBooks();
+            });
+        }
 
-    }
-
-    const clearForm = () => {
-        setBookName(''); 
-        setAuthor('');   
+        refreshBooks();
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label>
-                    Book name:
-                    <input
-                        type="text"
-                        placeholder='Book name'
-                        value={BookName}
-                        onChange={(e) => setBookName(e.target.value)}
-                    />
-                </label>
-            </div>
-            <div>
-                <label>
-                    Author:
-                    <input
-                        type="text"
-                        placeholder='Author'
-                        value={Author}
-                        onChange={(e) => setAuthor(e.target.value)}
-                    />
-                </label>
-            </div>
-            <button type="submit">Submit</button>
-        </form>
+        <>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label>
+                        Book Name:
+                        <input
+                            type="text"
+                            placeholder="Book name"
+                            value={bookName}
+                            onChange={(e) => setBookName(e.target.value)}
+                        />
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Author:
+                        <input
+                            type="text"
+                            placeholder="Author"
+                            value={author}
+                            onChange={(e) => setAuthor(e.target.value)}
+                        />
+                    </label>
+                </div>
+                <button type="submit">{status === 'add' ? 'Add Book' : 'Update Book'}</button>
+            </form>
+
+        </>
     );
+
+
 };
 
 export default Input;

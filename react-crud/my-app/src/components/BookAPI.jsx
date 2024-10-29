@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import Input from './Input'
+// import { UpdateBook } from './UpdateBook';
 
 export const BookAPI = () => {
     const [books, setBooks] = useState([]);
     const [change, setChange] = useState(0);
+    const [inputStatus, setInputStatus] = useState('add');
+    const [selectedBook, setSelectedBook] = useState();
 
     useEffect(() => {
         fetch('http://localhost:5000/books')
@@ -12,16 +15,44 @@ export const BookAPI = () => {
             .catch(error => console.error('Error fetching books:', error));
     }, [change]);
 
-const updateArray = ()=>{
-    setChange(prevChange => prevChange + 1);
-}
+    const refreshBooks = () => {
+        setChange(prevChange => prevChange + 1);
+    }
+
+    const handleUpdateClick = (book) => {
+        setInputStatus('update');
+        setSelectedBook(book);
+    };
+
+    const getNextId = () => {
+        const idTo = books.length > 0 ? Math.max(...books.map(book => book.id)) + 1 : 1;
+        return idTo;
+    };
+    const handleDeleteClick = () => {
+
+    }
     return (
         <div>
             <h2>Book API</h2>
-            <Input booksLength={books.length} onUpdate={updateArray}></Input>
+            <Input
+                newId={getNextId()}
+                status={inputStatus} bookData={selectedBook} onSuccess={() => {
+                    refreshBooks();
+                    setInputStatus('add');
+                    setSelectedBook(null);
+                }}
+                refreshBooks={refreshBooks}></Input>
+
             <ul>
                 {books.map(book => (
-                    <li key={book.id}>{book.name} by {book.author}</li>
+                    <>
+                        <li key={book.id}>
+                            {book.name} by {book.author}
+                            <button onClick={() => handleUpdateClick(book)}>Update</button>
+                            <button onClick={() => handleDeleteClick(book)}>Delete</button>
+                        </li>
+
+                    </>
                 ))}
             </ul>
 
