@@ -1,6 +1,3 @@
-
-
-
 export const updateBook = (newBookData, onSuccess) => {
     if (newBookData) {
         fetch(`http://localhost:5000/books/${newBookData.id}`, {

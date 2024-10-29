@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Input from './Input'
-// import { UpdateBook } from './UpdateBook';
+import { deleteBook } from './DeleteBook';
 
 export const BookAPI = () => {
     const [books, setBooks] = useState([]);
@@ -25,12 +25,16 @@ export const BookAPI = () => {
     };
 
     const getNextId = () => {
-        const idTo = books.length > 0 ? Math.max(...books.map(book => book.id)) + 1 : 1;
-        return idTo;
+        return books.length > 0 ? Math.max(...books.map(book => book.id)) + 1 : 1;;
     };
-    const handleDeleteClick = () => {
+    const handleDeleteClick = (book) => {
+        console.log('delete', book);
 
-    }
+        deleteBook(book, () => {
+            refreshBooks();
+        });
+
+    };
     return (
         <div>
             <h2>Book API</h2>
