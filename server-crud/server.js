@@ -1,7 +1,10 @@
-import express from "express";
-const app = express();
+const express = require("express");
+const cors = require("cors");
 
-const port = 3000;
+const app = express();
+app.use(cors());
+
+const port = 5000;
 
 const books = [
   { id: 1, name: "To Kill a Mockingbird", author: "Harper Lee" },
@@ -17,19 +20,19 @@ app.use(express.json());
 // CRUD
 
 //  GET all books
-app.get("./books", (req, res) => {
+app.get("/books", (req, res) => {
   res.json(books);
 });
 
 // get book by id
-app.get("./books/:id", (req, res) => {
+app.get("/books/:id", (req, res) => {
   const book = books.find((b) => b.id === parseInt(req.params.id));
   if (!book) return res.status(404).send("Book not found");
   res.json(book);
 });
 
 // create a new book
-app.post("./books", (req, res) => {
+app.post("/books", (req, res) => {
   const newBook = {
     id: books.length + 1,
     name: req.body.name,
@@ -40,27 +43,23 @@ app.post("./books", (req, res) => {
 });
 
 // update book
-app.put("./books/:id", (req, res) => {
+app.put("/books/:id", (req, res) => {
   const book = books.find((b) => b.id === parseInt(req.params.id));
   if (!book) return res.status(404).send("Book not found");
   book.name = req.body.name;
-  book.author.req.body.author;
+  book.author = req.body.author;
   res.json(book);
 });
 
 // delete book
-app.delete('./books/:id',(req,res)=>{
-    const bookIndex = books.findIndex(b=>b.id===parseInt(req.params.id));
-    if(bookIndex===-1) return res.status(404).send("Book not found");
+app.delete("/books/:id", (req, res) => {
+  const bookIndex = books.findIndex((b) => b.id === parseInt(req.params.id));
+  if (bookIndex === -1) return res.status(404).send("Book not found");
 
-    const updatedBooks = books.splice(bookIndex,1);
-    res.json(updatedBooks);
+  const updatedBooks = books.splice(bookIndex, 1);
+  res.json(updatedBooks);
 });
 
-
-
-
-app.listen(port, ()=>{
-    console.log(`Server is running on http://localhost:${port}`);
-    
-})
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
